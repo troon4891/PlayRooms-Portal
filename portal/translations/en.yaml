@@ -1,0 +1,12 @@
+configuration:
+  port:
+    name: Port
+    description: TCP port the Portal relay server listens on
+  shared_secret:
+    name: Shared Secret
+    description: >-
+      Shared secret for authenticating Host connections. Must match the
+      portal_secret configured in the PlayRooms Host addon.
+  log_level:
+    name: Log Level
+    description: Server log verbosity level

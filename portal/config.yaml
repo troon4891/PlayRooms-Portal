@@ -1,0 +1,20 @@
+name: "PlayRooms Portal"
+version: "1.0.0"
+slug: "playrooms-portal"
+description: "Lightweight relay server for remote guest access to a PlayRooms Host"
+url: "https://github.com/troon4891/PlayRooms-Portal"
+arch:
+  - amd64
+init: false
+ports:
+  3001/tcp: 3001
+ports_description:
+  3001/tcp: "Portal relay server"
+options:
+  port: 3001
+  shared_secret: ""
+  log_level: "info"
+schema:
+  port: "int(1024,65535)"
+  shared_secret: "str"
+  log_level: "list(debug|info|warn|error)?"
