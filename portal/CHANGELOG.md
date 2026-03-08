@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.1 — 2026-03-08
+
+### Fixed
+
+- Replaced MIT LICENSE with Apache License 2.0 (matching PlayRooms Host repo)
+- Added missing `relay-bridge.ts` — bidirectional relay utility module for Host↔guest message forwarding
+
 ## 1.0.0 — 2026-03-08
 
 ### Added
