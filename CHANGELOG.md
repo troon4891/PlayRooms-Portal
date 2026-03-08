@@ -2,6 +2,13 @@
 
 All notable changes to PlayRooms Portal will be documented in this file.
 
+## [1.0.1] — 2026-03-08
+
+### Fixed
+
+- Replaced GitHub-generated MIT `LICENSE` with the correct Apache License 2.0 (matching PlayRooms Host repo)
+- Added missing `relay-bridge.ts` — the bidirectional relay utility module providing canonical helpers for Host↔guest message forwarding (`emitToGuest`, `emitGuestApproved`, `emitGuestRejected`, `broadcastToRoom`, `broadcastToInstance`, `emitGuestConnect`, `emitGuestDisconnect`, `emitValidateRequest`, `emitUpstream`). Adapted from Host repo; all Host-specific logic (lobby, chat, toybox, buttplug, webhooks) stripped — Portal remains a stateless message pipe.
+
 ## [1.0.0] — 2026-03-08
 
 ### Added
