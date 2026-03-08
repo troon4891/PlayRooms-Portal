@@ -97,28 +97,61 @@ The handshake validates protocol versions. If Host and Portal disagree, the conn
 
 If you find yourself adding any of these, stop and reconsider. The Portal is intentionally minimal.
 
-### Directory Layout (Target)
+### Home Assistant Addon Structure
+
+Home Assistant expects addons in a specific directory layout. The HA Supervisor scans the repository for subdirectories containing a `config.yaml` — that's how it discovers addons. The `repository.yaml` at root identifies this as an addon repository.
 
 ```
 PlayRooms-Portal/
-├── src/
-│   ├── index.ts              # Entry point — Express + Socket.IO server
-│   ├── relay/
-│   │   ├── host-namespace.ts # /relay namespace for Host connections
-│   │   ├── guest-handler.ts  # Default namespace for guest connections
-│   │   └── token-cache.ts    # Short-lived token validation cache
-│   └── shared/
-│       └── relay-types.ts    # COPY from Host repo — do not edit here
-├── config.yaml               # HA addon config (for HA deployment)
-├── docker-compose.yml        # Standalone deployment
-├── Dockerfile                # Lightweight — Node only, no extras
-├── README.md                 # Project landing page
-├── CHANGELOG.md              # Version history
-├── NOTICE.md                 # Third-party attributions
-├── SECURITY.md               # Vulnerability reporting policy
-├── LICENSE                   # Apache 2.0
-└── CLAUDE.md                 # This file
+├── repository.yaml              ← HA addon repo identity (name, url, maintainer)
+├── README.md                    ← GitHub landing page
+├── CLAUDE.md                    ← This file
+├── CHANGELOG.md                 ← Root changelog (project-level)
+├── LICENSE                      ← License file
+├── SECURITY.md                  ← Vulnerability reporting policy
+├── NOTICE.md                    ← Third-party attributions
+├── docker-compose.yml           ← Standalone deployment (NOT used by HA)
+├── qa/                          ← QA checklists directory
+└── portal/                      ← Addon subdirectory (HA finds this)
+    ├── config.yaml              ← HA addon config (name, slug, version, options)
+    ├── build.yaml               ← Build architecture targets
+    ├── Dockerfile               ← Lightweight — Node.js only
+    ├── run.sh                   ← Container entrypoint
+    ├── DOCS.md                  ← HA renders as addon documentation tab
+    ├── CHANGELOG.md             ← HA renders as addon changelog tab
+    ├── translations/
+    │   └── en.yaml              ← Option descriptions for HA UI
+    └── server/
+        ├── package.json
+        ├── tsconfig.json
+        └── src/
+            ├── index.ts         ← Portal server entry point
+            ├── config.ts        ← Configuration (port, secret, log level)
+            ├── logger.ts        ← Logging utility
+            ├── shared/
+            │   └── relay-types.ts  ← COPY from Host repo — do not edit here
+            └── portal/
+                ├── relay-namespace.ts   ← /relay namespace for Host connections
+                ├── guest-namespace.ts   ← Default namespace for guest connections
+                ├── guest-bridge.ts      ← Guest connection tracking and routing
+                ├── routes.ts            ← HTTP routes (health, token validation)
+                ├── token-cache.ts       ← Short-lived validation result cache
+                └── instance-registry.ts ← Connected Host instance tracking
 ```
+
+**Key differences from the Host addon:**
+- No client build (no React, no Vite, no frontend)
+- No Intiface Engine download (no device control)
+- No hardware passthrough (no `host_dbus`, `uart`, `usb`)
+- No ingress (Portal is accessed directly by remote guests, not through HA sidebar)
+- Much smaller Docker image
+
+**What HA reads from where:**
+- `repository.yaml` → repo name and maintainer (shown in addon store)
+- `portal/config.yaml` → addon metadata, options schema, architecture, ports
+- `portal/DOCS.md` → rendered in the addon's "Documentation" tab
+- `portal/CHANGELOG.md` → rendered in the addon's "Changelog" tab
+- `portal/translations/en.yaml` → option labels and descriptions in HA UI
 
 ---
 
@@ -218,3 +251,25 @@ Be specific and technical:
 ```
 
 **Scope the checklist to what you changed.** Both sections should cover the same functionality — one in plain language, one with technical precision. Always include a relay types sync check if any protocol-related code was touched.
+
+### Git Workflow
+
+Claude Code cannot push directly to `beta` or `main`. All work goes to a `claude/*` feature branch which is automatically pushed. The Project Designer merges via PR on GitHub.
+
+**Your workflow:**
+1. Create a feature branch (Claude Code does this automatically with `claude/` prefix)
+2. Commit your work with clear messages
+3. Push the feature branch (this succeeds)
+4. Tell the Project Designer the branch is ready for PR to beta
+5. Do NOT attempt to merge to beta locally or push to beta — it will fail with a 403
+
+**Do NOT waste time** trying to merge to beta, push to beta, or work around the branch restriction. Just push your feature branch and tell the user to create the PR.
+
+### Versioning Checklist
+
+When bumping versions, update all of these:
+- `portal/config.yaml` — HA addon version
+- `portal/server/package.json` — npm package version
+- Root `CHANGELOG.md` — project-level changelog
+- `portal/CHANGELOG.md` — HA addon changelog tab
+- The `/api/health` endpoint reads version from `package.json` automatically

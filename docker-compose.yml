@@ -1,0 +1,13 @@
+# Standalone deployment — NOT used by HA addon
+# For deploying PlayRooms Portal on a VPS or cloud server
+version: '3.8'
+services:
+  portal:
+    build: ./portal
+    ports:
+      - "3001:3001"
+    environment:
+      - PORTAL_PORT=3001
+      - SHARED_SECRET=change-me-to-a-strong-secret
+      - LOG_LEVEL=info
+    restart: unless-stopped
