@@ -1,5 +1,5 @@
 export type LogLevel = "debug" | "info" | "warn" | "error";
-export type Subsystem = "Portal" | "Relay" | "Guest" | "API";
+export type Subsystem = "Portal" | "Relay" | "RelayBridge" | "Guest" | "API";
 
 const LEVELS: Record<LogLevel, number> = { debug: 0, info: 1, warn: 2, error: 3 };
 let minLevel: number = LEVELS.info;
