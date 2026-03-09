@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2 — 2026-03-09
+
+### Fixed
+
+- Added `"RelayBridge"` to the `Subsystem` union type in `logger.ts` — fixed TypeScript build error (TS2345) in `relay-bridge.ts`
+
 ## 1.0.1 — 2026-03-08
 
 ### Fixed

@@ -1,5 +1,5 @@
 name: "PlayRooms Portal"
-version: "1.0.1"
+version: "1.0.2"
 slug: "playrooms-portal"
 description: "Lightweight relay server for remote guest access to a PlayRooms Host"
 url: "https://github.com/troon4891/PlayRooms-Portal"
